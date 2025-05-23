@@ -36,53 +36,59 @@ In timing diagram Q0 is changing as soon as the negative edge of clock pulse is 
 
 **PROGRAM**
 
-/* Program for 4 Bit Ripple Counter and verify its truth table in quartus using Verilog programming.
 ```
-    module program12 (
-        input clk,     // Clock input
-        input reset,   // Reset input (active high)
-        output [3:0] q // 4-bit output
-    );
-        // Internal signals for flip-flops
-        reg [3:0] q_int;
 
-        // Assign internal register to output
-        assign q = q_int;
+module RippleCounter(
+   input wire clk, 
+   output reg [3:0] count 
+);
+always @(posedge clk) begin
+   if (count == 4'b1111) 
+       count <= 4'b0000;
+   else
+       count <= count + 1;
+end
+endmodule
+module RippleCounter_tb;
+reg clk;
+wire [3:0] count;
+RippleCounter uut(
+   .clk(clk),
+   .count(count)
+);
+initial begin
+   clk = 0;
+   forever #5 clk = ~clk; 
+end
+initial begin
+   #10;
+   $display("Time | Count");
+   $display("-----------------");
+   repeat (16) begin
+       #5; 
+       $display("%4d | %b", $time, count);
+   end
+   $finish;
+end
+endmodule
 
-        always @(posedge clk or posedge reset) begin
-            if (reset) 
-                q_int[0] <= 1'b0; // Reset the first bit to 0
-            else 
-                q_int[0] <= ~q_int[0]; // Toggle the first bit on clock edge
-       end
+```
 
-        // Generate the other flip-flops based on the output of the previous one
-        genvar i;
-        generate
-            for (i = 1; i < 4; i = i + 1) begin : ripple
-                always @(posedge q_int[i-1] or posedge reset) begin
-                    if (reset) 
-                        q_int[i] <= 1'b0; // Reset the bit to 0
-                    else 
-                        q_int[i] <= ~q_int[i]; // Toggle the bit on clock edge of previous stage
-                end
-            end
-        endgenerate
-    endmodule
-```
-```
- Developed by:MADHUMITHA.B
- RegisterNumber: 212224050018
-```
+ Developed by: Madhumitha.B
+ 
+ 
+ RegisterNumber:212224050018
+
 **RTL LOGIC FOR 4 Bit Ripple Counter**
 
-![prgm12 rtl](https://github.com/user-attachments/assets/e75b91b0-e4fc-4c5f-a8ab-1b0a4fb5abd9)
+![12](https://github.com/user-attachments/assets/038d35aa-c6d8-4235-9d22-c2df8c46f057)
 
 
 **TIMING DIGRAMS FOR 4 Bit Ripple Counter**
 
-![12op](https://github.com/user-attachments/assets/d33a16da-aa0f-42dd-a215-07edc8196410)
+![12 1](https://github.com/user-attachments/assets/b7a06944-a0f6-4433-ab4f-348a1a5545cd)
+
 
 **RESULTS**
 
-Thus the 4 Bit Ripple Counter is implemented using verilog and validated their functionality using their functional tables
+Thus 4-bit-ripple-counter has been executed successfully
